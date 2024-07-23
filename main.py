@@ -18,3 +18,6 @@ go_wall = 0.75
 go_outside = 0.8
 go_already_visited = 0.25
 loose_treshold = -0.5
+
+# Exploration factor
+epsilon = 0.1 # So exploitation factor is 0.9
