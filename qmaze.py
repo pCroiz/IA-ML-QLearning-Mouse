@@ -5,8 +5,14 @@ class Qmaze(object):
     
     Attributes:
         - _maze (np.array) : The initial maze (the environment)
+        - maze (np.array) : The maze at time t
         - target (tuple) : The target. It's position is in the right bottom of the grid
         - free_cells (list) : List of the free cells
+        - rat (tuple) : The initial position of the rat
+        - state (tuple) : ?
+        - min_reward (float) : ?
+        - total_reward (float) : The value of the reward accumulated by the rat
+        - visited (set) : The position visited by the rat
 
     """
 
@@ -33,3 +39,25 @@ class Qmaze(object):
         
         # Finally, init the maze
         self.reset(rat)
+
+    def reset(self,rat) -> None:
+        # Reset the rat
+        self.rat = rat
+
+        # Reset the maze
+        self.maze = np.copy(self._maze)
+
+        # Put to the maze the position of the rat
+        row,col = rat
+        self.maze[row,col] = 0.5
+
+        #
+        self.state = (row,col,'start')
+
+        #
+        self.min_reward = -0.5 * self.maze.size
+
+        # 
+        self.total_reward = 0
+
+        self.visited = set()
