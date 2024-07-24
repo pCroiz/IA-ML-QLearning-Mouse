@@ -1,5 +1,6 @@
 from qmaze import *
 from agent import *
+import matplotlib.pyplot as plt
 
 class Game(object):
 
@@ -48,6 +49,7 @@ class Game(object):
             # Get the new state
             newSate = self._qmaze.getAgentPosition()
     
+            # Update the model
             self._model.updateQ(state,action,reward,newSate)
     
             if status == 'lose':
@@ -59,4 +61,58 @@ class Game(object):
             else:
                 numberIteration += 1
                 
-        return status
+        return status,numberIteration
+    
+    
+    
+    
+    def train(self, numberOfWin:int) -> None :
+        """
+        Train the model to solve the maze
+
+        Args:
+            numberOfWin (int): The number of win before we consider the model effective
+        """
+        
+        # Initialize the variable for the iteration
+        numberOfIteration = 0
+        
+        # Initialize a list that keeps the number of iteration through the victory
+        iterationForVictory = [100]
+        
+        # Initialize a list that keeps the number of iteration through the looses
+        iterationForLoose = [100]
+        
+        # Start the loop
+        while numberOfIteration < numberOfWin:
+            
+            # Play a game
+            status,numberIteration = self.play(textDisplay=False)
+            
+            # If it's a win, we add the number of iteraton to the corresponding list
+            if status == 'win' :
+                
+                # If we win we append the new number of iteration to the win list
+                iterationForVictory.append(numberIteration)
+                
+                # And we dupplicate the last value for the loose list
+                iterationForLoose.append(iterationForLoose[-1])
+                
+                # Increment the number of iteration
+                numberOfIteration += 1
+            else:
+                
+                # If we loose we append the new number of iteration to the loose list
+                iterationForLoose.append(numberIteration)
+                
+                # And we dupplicate the last value for the win list
+                iterationForVictory.append(iterationForVictory[-1])
+                
+        # Finally we plot the evolution of the number of iteration through the win
+        plt.plot([i for i in range(len(iterationForVictory))], iterationForVictory,'r', label='Wins')
+        plt.plot([i for i in range(len(iterationForLoose))], iterationForLoose,'b', label='Losses')
+        plt.xlabel('Number of Games')
+        plt.ylabel('Number of Iterations')
+        plt.title('Evolution of Number of Iterations Through the Games')
+        plt.legend()
+        plt.show()
