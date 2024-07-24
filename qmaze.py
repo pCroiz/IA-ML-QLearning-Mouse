@@ -154,5 +154,14 @@ class Qmaze(object):
 
         # Observe the maze (usefull to draw the maze)
         envstate = self.observe()
-        
+
         return envstate, reward, status
+    
+
+    def observe(self):
+        """
+        observe the maze ?? 
+        """
+        canvas = self.draw_env()
+        envstate = canvas.reshape((1, -1))
+        return envstate
