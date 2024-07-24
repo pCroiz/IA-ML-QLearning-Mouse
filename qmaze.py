@@ -5,6 +5,8 @@ UP = 1
 RIGHT = 2
 DOWN = 3
 
+rat_mark = 0.5
+
 class Qmaze(object):
     """
     
@@ -54,7 +56,7 @@ class Qmaze(object):
 
         # Put to the maze the position of the rat
         row,col = rat
-        self.maze[row,col] = 0.5
+        self.maze[row,col] = rat_mark
 
         #
         self.state = (row,col,'start')
@@ -165,3 +167,25 @@ class Qmaze(object):
         canvas = self.draw_env()
         envstate = canvas.reshape((1, -1))
         return envstate
+    
+    def draw_env(self):
+        """
+        Create a canvas usefull to draw the maze with matplotlib
+        """
+        # Create the canvas
+        canvas = np.copy(self.maze)
+
+        # Get the shape
+        nrows, ncols = self.maze.shape
+
+        # Clear all visual marks
+        for r in range(nrows):
+            for c in range(ncols):
+                if canvas[r,c] > 0.0:
+                    canvas[r,c] = 1.0
+
+        # Draw the rat
+        row, col, valid = self.state
+        canvas[row, col] = rat_mark
+        
+        return canvas
