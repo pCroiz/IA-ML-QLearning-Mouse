@@ -3,10 +3,9 @@ from agent import *
 
 class Game(object):
 
-    def __init__(self,model:Rat,qmaze:Qmaze,rat_cell:tuple) -> None:
+    def __init__(self,model:Rat,qmaze:Qmaze) -> None:
         self._model = model
         self._qmaze = qmaze
-        self.rat_cell = rat_cell
         
         
     def play(self,ratPosition:tuple=(0,0)) -> None:
@@ -29,7 +28,7 @@ class Game(object):
             state = self._qmaze.getAgentPosition()
     
             # The agent do a choice
-            action = self._rat.act(state)
+            action = self._model.act(state)
     
             # The qmaze give a reward and a status according to the action choosen
             _, reward, status = self._qmaze.act(action)
@@ -37,7 +36,7 @@ class Game(object):
             # Get the new state
             newSate = self._qmaze.getAgentPosition()
     
-            self._rat.updateQ(state,action,reward,newSate)
+            self._model.updateQ(state,action,reward,newSate)
     
             if status == 'lose':
                 print("The game has been losed in : " + str(numberIteration) + " iteration")
@@ -46,4 +45,4 @@ class Game(object):
                 print("The game has been winned in : " + str(numberIteration) + " iteration")
                 stop = True
             else:
-                numberIteration
+                numberIteration += 1
