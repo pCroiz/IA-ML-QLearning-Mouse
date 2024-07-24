@@ -19,7 +19,7 @@ class Rat(object):
         nbrAction = len(possibleAction)
 
         # Get the size of the maze
-        nrows,ncols = self._maze.shape
+        nrows,ncols = self._maze.shape()
 
         # Initialize the Q matrix with random value between 0 and 1
         self._Q = np.random.rand(nrows, ncols, nbrAction)
@@ -63,5 +63,29 @@ class Rat(object):
         # return the choosen action
         return action
 
-    def train(self,reward):
-        pass
+    def updateQ(self,previousState:tuple,choosenAction:int,rewardReceived:float,state:tuple,) -> None :
+        """
+        Update the value of Q(s,a)
+
+        Args:
+            previousState (tuple): The state before the agent act
+            choosenAction (int): The action the agent choosed reguarding the previous state
+            rewardReceived (float): The reward the agent recevied by the environnement for the action he did
+            state (tuple): The new current state
+        """
+        
+        # Get the indices of the previous state and the new state
+        i_prev, j_prev = previousState
+        i, j = state
+
+        # Get the current Q value for the previous state and chosen action
+        Q_prev = self._Q[i_prev, j_prev, choosenAction]
+
+        # Get the maximum Q value for the new state
+        Q_max = max(self._Q[i, j])
+
+        # Calculate the new Q value for the previous state and chosen action
+        new_Q = (1 - self._alpha) * Q_prev + self._alpha * (rewardReceived + self._gamma * Q_max)
+
+        # Update the Q matrix
+        self._Q[i_prev, j_prev, choosenAction] = new_Q
