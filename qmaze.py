@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib as plt
 
 LEFT = 0
 UP = 1
@@ -239,3 +240,40 @@ class Qmaze(object):
             actions.remove(2)
 
         return actions
+    
+    def show(self):
+        """
+        Show the grid using matplotlib
+        """
+        plt.grid('on')
+
+        # Get the shape
+        nrows, ncols = self.maze.shape
+        
+        # Define the axes
+        ax = plt.gca()
+        ax.set_xticks(np.arange(0.5, nrows, 1))
+        ax.set_yticks(np.arange(0.5, ncols, 1))
+        ax.set_xticklabels([])
+        ax.set_yticklabels([])
+
+        # Get a copy of the maze
+        canvas = np.copy(self.maze)
+
+        # Color the visited cell
+        for row,col in self.visited:
+            canvas[row,col] = 0.6
+
+        # Get the rat position
+        rat_row, rat_col, _ = self.state
+
+        # Draw the rat cell
+        canvas[rat_row, rat_col] = 0.3 
+        
+        # Draw the cheese cell
+        canvas[nrows-1, ncols-1] = 0.9 # cheese cell
+
+        # create the image
+        img = plt.imshow(canvas, interpolation='none', cmap='gray')
+        
+        return img
