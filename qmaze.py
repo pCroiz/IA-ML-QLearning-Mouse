@@ -1,5 +1,10 @@
 import numpy as np
 
+LEFT = 0
+UP = 1
+RIGHT = 2
+DOWN = 3
+
 class Qmaze(object):
     """
     
@@ -16,10 +21,10 @@ class Qmaze(object):
 
     """
 
-    def __init__(self,maze,rat=(0,0)) -> None :
+    def __init__(self,maze:np.array,rat:tuple=(0,0)) -> None :
 
         # Get the maze (the environment)
-        self._maze = np.array(maze)
+        self._maze = maze
 
         # Get the shape of the maze
         nrows,ncols = self._maze.shape
@@ -40,7 +45,7 @@ class Qmaze(object):
         # Finally, init the maze
         self.reset(rat)
 
-    def reset(self,rat) -> None:
+    def reset(self,rat:tuple) -> None:
         # Reset the rat
         self.rat = rat
 
@@ -61,3 +66,40 @@ class Qmaze(object):
         self.total_reward = 0
 
         self.visited = set()
+
+
+    def update_state(self,action):
+        # Get the dimension of the maze
+        nrows,ncols = self.maze.shape
+
+        # Get the state of the rat
+        nrow, ncol, nmode = rat_row, rat_col, mode = self.state
+
+        # If rat in a valid position
+        if self.maze[rat_row, rat_col] > 0.0:
+            self.visited.add((rat_row, rat_col))  # mark visited cell
+
+        # Get the list of the valid actions
+        valid_actions = self.valid_actions()
+
+        # If there is no valid action
+        if not valid_actions:
+            nmode = 'blocked'
+
+        # Elif the action is a valid action
+        elif action in valid_actions:
+            nmode = 'valid'
+            if action == LEFT:
+                ncol -= 1
+            elif action == UP:
+                nrow -= 1
+            if action == RIGHT:
+                ncol += 1
+            elif action == DOWN:
+                nrow += 1
+        # invalid action, no change in rat position
+        else:             
+            mode = 'invalid'
+
+        # Update the new state
+        self.state = (nrow, ncol, nmode)
