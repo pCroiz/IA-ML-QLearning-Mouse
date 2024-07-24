@@ -277,3 +277,6 @@ class Qmaze(object):
         img = plt.imshow(canvas, interpolation='none', cmap='gray')
 
         return img
+    
+    def shape(self):
+        return self._maze.shape
