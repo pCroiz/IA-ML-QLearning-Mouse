@@ -4,7 +4,7 @@ import random
 
 class Rat(object):
 
-    def __init__(self,maze:Qmaze,possibleAction:enumerate,initPosition:tuple=(0,0),eps:float=0.5,alpha:float=0.8,gamma:float=0.95) -> None:
+    def __init__(self,maze:Qmaze,possibleAction:enumerate,initPosition:tuple=(0,0),eps:float=0.8,alpha:float=0.8,gamma:float=0.95) -> None:
 
         # Get the maze
         self._maze = maze
