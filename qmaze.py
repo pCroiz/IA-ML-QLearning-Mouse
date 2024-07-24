@@ -136,3 +136,23 @@ class Qmaze(object):
         if mode == 'valid':
             return -0.04
 
+    def act(self, action):
+        """
+        Process one step in the maze
+        """
+        # Update the action
+        self.update_state(action)
+
+        # Get the reward
+        reward = self.get_reward()
+
+        # Update the total reward value
+        self.total_reward += reward
+
+        # Get the status of the game
+        status = self.game_status()
+
+        # Observe the maze (usefull to draw the maze)
+        envstate = self.observe()
+        
+        return envstate, reward, status
