@@ -171,7 +171,7 @@ class Qmaze(object):
     
     def draw_env(self):
         """
-        Create a canvas usefull to draw the maze with matplotlib
+        Create a canvas useful to draw the maze with matplotlib
         """
         # Create the canvas
         canvas = np.copy(self.maze)
@@ -184,6 +184,9 @@ class Qmaze(object):
             for c in range(ncols):
                 if canvas[r,c] > 0.0:
                     canvas[r,c] = 1.0
+                    
+        for (r,c) in self.visited:
+            canvas[r,c] = 0.25
 
         # Draw the rat
         row, col, valid = self.state
