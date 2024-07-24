@@ -4,7 +4,7 @@ import random
 
 class Rat(object):
 
-    def __init__(self,maze:Qmaze,possibleAction:enumerate,eps:float=0.9,initPosition:tuple=(0,0)) -> None:
+    def __init__(self,maze:Qmaze,possibleAction:enumerate,initPosition:tuple=(0,0),eps:float=0.9,alpha:float=0.8,gamma:float=0.95) -> None:
 
         # Get the maze
         self._maze = maze
@@ -26,6 +26,12 @@ class Rat(object):
 
         # Set the value of epsilon
         self._eps = eps
+        
+        # Set the value of gamma
+        self._gamma = gamma
+        
+        # Set the value of alpha (learning rate)
+        self._alpha = alpha
 
 
     def act(self,state:tuple) -> int:
