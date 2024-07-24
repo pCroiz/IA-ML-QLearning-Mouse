@@ -187,5 +187,23 @@ class Qmaze(object):
         # Draw the rat
         row, col, valid = self.state
         canvas[row, col] = rat_mark
-        
+
         return canvas
+    
+
+    def game_status(self):
+        """
+        Get the game status reguarding the situation
+        """
+
+        # Look if the game is loosed
+        if self.total_reward < self.min_reward:
+            return 'lose'
+        
+        # Look if the game is win
+        rat_row, rat_col, mode = self.state
+        nrows, ncols = self.maze.shape
+        if rat_row == nrows-1 and rat_col == ncols-1:
+            return 'win'
+
+        return 'not_over'
