@@ -1,3 +1,7 @@
+# Import
+from qmaze import *
+
+
 # List of the action (encoded by a number)
 LEFT = 0
 UP = 1
@@ -11,13 +15,24 @@ actions_dict = {
     DOWN: 'down'
 }
 
-# List of recompense
-move = 0.04
-get_cheese = 1.0
-go_wall = 0.75
-go_outside = 0.8
-go_already_visited = 0.25
-loose_treshold = -0.5
+# Create the maze
+maze = np.array([
+    [ 1.,  0.,  1.,  1.,  1.,  1.,  1.,  1.],
+    [ 1.,  0.,  1.,  1.,  1.,  0.,  1.,  1.],
+    [ 1.,  1.,  1.,  1.,  0.,  1.,  0.,  1.],
+    [ 1.,  1.,  1.,  0.,  1.,  1.,  1.,  1.],
+    [ 1.,  1.,  0.,  1.,  1.,  1.,  1.,  1.],
+    [ 1.,  1.,  1.,  0.,  1.,  0.,  0.,  0.],
+    [ 1.,  1.,  1.,  0.,  1.,  1.,  1.,  1.],
+    [ 1.,  1.,  1.,  1.,  0.,  1.,  1.,  1.]
+])
 
-# Exploration factor
-epsilon = 0.1 # So exploitation factor is 0.9
+# Creation of a Qmaze
+qmaze = Qmaze(maze)
+
+# Test
+canvas, reward, game_over = qmaze.act(DOWN)
+canvas, reward, game_over = qmaze.act(UP)
+print("reward=", reward)
+qmaze.show()
+plt.show()
