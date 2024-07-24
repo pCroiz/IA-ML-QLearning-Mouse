@@ -8,13 +8,25 @@ class Game(object):
         self._qmaze = qmaze
         
         
-    def play(self,ratPosition:tuple=(0,0)) -> None:
+    def play(self,ratPosition:tuple=(0,0),**kwargs) -> str:
         """
         Play one game of the maze
 
         Args:
             ratPosition (tuple, optional): The initial rat position. Defaults to (0,0).
+            
+        Keywords Arguments:
+            textDisplay (bool) : To display some information of the play
+
+        Returns:
+            str: The status of the game
         """
+        
+        # Display the text or not
+        if 'textDisplay' in kwargs and kwargs['textDisplay']:
+            textDisplay = True
+        else:
+            textDisplay = False
         
         stop = False
         numberIteration = 0
@@ -39,10 +51,12 @@ class Game(object):
             self._model.updateQ(state,action,reward,newSate)
     
             if status == 'lose':
-                print("The game has been losed in : " + str(numberIteration) + " iteration")
+                if textDisplay : print("The game has been losed in : " + str(numberIteration) + " iteration")
                 stop = True
             elif status == 'win':
-                print("The game has been winned in : " + str(numberIteration) + " iteration")
+                if textDisplay : print("The game has been winned in : " + str(numberIteration) + " iteration")
                 stop = True
             else:
                 numberIteration += 1
+                
+        return status
