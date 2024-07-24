@@ -1,5 +1,5 @@
 import numpy as np
-import matplotlib as plt
+import matplotlib.pyplot as plt
 
 LEFT = 0
 UP = 1
@@ -102,7 +102,7 @@ class Qmaze(object):
                 nrow += 1
         # invalid action, no change in rat position
         else:             
-            mode = 'invalid'
+            nmode = 'invalid'
 
         # Update the new state
         self.state = (nrow, ncol, nmode)
@@ -127,13 +127,13 @@ class Qmaze(object):
         if mode == 'blocked':
             return self.min_reward - 1
         
+         # If the action is invalid (like go on a wall)
+        if mode == 'invalid':
+            return -0.75
+        
         # If he go to a cell he already visited
         if (rat_row, rat_col) in self.visited:
             return -0.25
-        
-        # If the action is invalid (like go on a wall)
-        if mode == 'invalid':
-            return -0.75
         
         # If he progress through the maze
         if mode == 'valid':
@@ -275,5 +275,5 @@ class Qmaze(object):
 
         # create the image
         img = plt.imshow(canvas, interpolation='none', cmap='gray')
-        
+
         return img
