@@ -103,3 +103,36 @@ class Qmaze(object):
 
         # Update the new state
         self.state = (nrow, ncol, nmode)
+
+
+    def get_reward(self):
+        """
+        Give the reward reguarding the situation of the rat
+        """
+
+        # Get the state of the rat
+        rat_row, rat_col, mode = self.state
+
+        # Get the size of the maze
+        nrows, ncols = self.maze.shape
+
+        # If the rat is at the cheese the reward is 1
+        if rat_row == nrows-1 and rat_col == ncols-1:
+            return 1.0
+        
+        # If he is blocked
+        if mode == 'blocked':
+            return self.min_reward - 1
+        
+        # If he go to a cell he already visited
+        if (rat_row, rat_col) in self.visited:
+            return -0.25
+        
+        # If the action is invalid (like go on a wall)
+        if mode == 'invalid':
+            return -0.75
+        
+        # If he progress through the maze
+        if mode == 'valid':
+            return -0.04
+
