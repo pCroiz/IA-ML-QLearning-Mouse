@@ -280,3 +280,7 @@ class Qmaze(object):
     
     def shape(self):
         return self._maze.shape
+    
+    def getAgentPosition(self):
+        row,col,_ = self.state
+        return (row,col)
