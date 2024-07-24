@@ -31,6 +31,12 @@ class Rat(object):
     def act(self,state:tuple) -> int:
         """
         Reguarding the current state, choose the action a using the policy of Q
+
+        Args:
+            state (tuple): The current state
+
+        Returns:
+            int: The action choosen
         """
         
         # Get the indices
