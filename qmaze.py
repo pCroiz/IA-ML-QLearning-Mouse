@@ -207,3 +207,35 @@ class Qmaze(object):
             return 'win'
 
         return 'not_over'
+    
+    def valid_actions(self, cell=None):
+        """
+        Define the valid actions for the rat ragurading it's position
+        """
+        if cell is None:
+            row, col, mode = self.state
+        else:
+            row, col = cell
+        actions = [0, 1, 2, 3]
+        nrows, ncols = self.maze.shape
+        if row == 0:
+            actions.remove(1)
+        elif row == nrows-1:
+            actions.remove(3)
+
+        if col == 0:
+            actions.remove(0)
+        elif col == ncols-1:
+            actions.remove(2)
+
+        if row>0 and self.maze[row-1,col] == 0.0:
+            actions.remove(1)
+        if row<nrows-1 and self.maze[row+1,col] == 0.0:
+            actions.remove(3)
+
+        if col>0 and self.maze[row,col-1] == 0.0:
+            actions.remove(0)
+        if col<ncols-1 and self.maze[row,col+1] == 0.0:
+            actions.remove(2)
+
+        return actions
