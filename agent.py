@@ -148,3 +148,46 @@ class NeuralNetwork(nn.Module):
         out = self.fc3(x)
 
         return out
+    
+def Qloss(batch, net, gamma=0.99, device="cuda"):
+    """
+    Compute the loss for a Deep Q-Learning (DQL) algorithm.
+
+    Args:
+        batch (tuple): A tuple containing the states, actions, next states, rewards, and ?.
+        net (nn.Module): The neural network (Q-network) that estimates the Q-values.
+        gamma (float, optional): The discount factor, which determines the importance of future rewards. Defaults to 0.99.
+        device (str, optional): The device on which the computations are performed (e.g., "cuda" for GPU or "cpu" for CPU). Defaults to "cuda".
+
+    Returns:
+        torch.Tensor: The computed loss.
+    """
+    
+    # Unpacking the batch
+    states, actions, next_states, rewards, _ = batch
+    
+    # Get the number of states
+    lbatch = len(states)
+    
+    # Pass the states through the neural network
+    state_action_values = net(states.view(lbatch,-1))
+    
+    # Select the Q-value corresponding to the actions taken
+    state_action_values = state_action_values.gather(1, actions.unsqueeze(-1))
+    
+    # Remove the extra dimension
+    state_action_values = state_action_values.squeeze(-1)
+    
+    # Pass the next states through the neural network
+    next_state_values = net(next_states.view(lbatch, -1))
+    
+    # Select the maximum Q-Value for each next state
+    next_state_values = next_state_values.max(1)[0]
+    
+    # Detach the Next State Values from the Computation Graph
+    next_state_values = next_state_values.detach()
+    
+    # Compute the Expected Q-Values Using the Bellman Equation
+    expected_state_action_values = next_state_values * gamma + rewards
+    
+    return nn.MSELoss()(state_action_values, expected_state_action_values)
