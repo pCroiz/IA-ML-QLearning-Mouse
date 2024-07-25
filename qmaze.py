@@ -287,3 +287,20 @@ class Qmaze(object):
     def getAgentPosition(self):
         row,col,_ = self.state
         return (row,col)
+    
+    def draw(self):
+        plt.figure()
+        im = plt.imshow(np.round(1 - self.maze), interpolation='none', aspect='equal', cmap='Greys')
+        ax = plt.gca()
+
+        plt.xticks([], [])
+        plt.yticks([], [])
+        
+        # Get the position
+        row,col,_ = self.state
+
+        ax.plot(self.target[1], self.target[0],
+                'bs', markersize = 4)
+        ax.plot(row, col,
+                'rs', markersize = 4)
+        plt.show()
