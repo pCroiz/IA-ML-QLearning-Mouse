@@ -1,6 +1,7 @@
 from qmaze import *
 from agent import *
 import matplotlib.pyplot as plt
+from matplotlib import animation
 
 class Game(object):
 
@@ -63,9 +64,46 @@ class Game(object):
                 
         return status,numberIteration
     
+    def playAnimation(self,ratPosition:tuple=(0,0)):
+        
+        # Reset the maze
+        self._qmaze.reset(ratPosition)
+        
+        # Set up the figure and axes for animation
+        fig, ax = plt.subplots()
+        img = ax.imshow(self._qmaze.draw_env(), interpolation='none', cmap='gray')
+
+        def update(frame):
+            
+            # Get the agent position
+            state = self._qmaze.getAgentPosition()
+
+            # The agent do a choice
+            action = self._model.act(state)
+
+            envstate, reward, status = self._qmaze.act(action)
+
+            # Get the new state
+            newSate = self._qmaze.getAgentPosition()
+
+            self._model.updateQ(state,action,reward,newSate)
+
+            if status == 'lose' or status == 'win':
+                return True
+
+            # Update the image data
+            img.set_data(self._qmaze.draw_env())
+
+            return [img]
+
+        # Set up the animation
+        ani = animation.FuncAnimation(fig, update, interval=100)
+
+        # Show the animation
+        plt.show()
+
     
-    
-    
+       
     def train(self, numberOfWin:int) -> None :
         """
         Train the model to solve the maze
