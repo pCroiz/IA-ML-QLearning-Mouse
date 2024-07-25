@@ -2,6 +2,11 @@ from qmaze import *
 import numpy as np
 import random
 
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import collections
+
 class Rat(object):
 
     def __init__(self,maze:Qmaze,possibleAction:enumerate,initPosition:tuple=(0,0),eps:float=0.8,alpha:float=0.8,gamma:float=0.95) -> None:
@@ -95,3 +100,51 @@ class Rat(object):
 
         # Update the Q matrix
         self._Q[i_prev, j_prev, choosenAction] = new_Q
+        
+        
+        
+class NeuralNetwork(nn.Module):
+    
+    def __init__(self,Ni:int,Nh1:int,Nh2:int,No:int=4) -> None:
+        """
+        Initialisation of a neural network using for the deep q-learning algorithm
+
+        Args:
+            Ni (int): Numper of inputs neurons
+            Nh1 (int): Number of neurons for the first layer
+            Nh2 (int): Number of neurons for the second layer
+            No (int, optional): Number of outputs neurons. Need to correspond to the number of possible actions. Defaults to 4.
+        """
+        
+        # Init of the super class
+        super.__init__()
+        
+        # Init of the layer
+        self.fc1 = nn.Linear(Ni, Nh1)
+        self.fc2 = nn.Linear(Nh1, Nh2)
+        self.fc3 = nn.Linear(Nh2, No)
+        self.act = nn.ReLU()
+        
+    def forward(self, x, classification = False, additional_out=False):
+        """
+        Forward pass of the neural network. (The way through the neural network)
+
+        Args:
+            x ( ? )): Input
+            classification (bool, optional): Whether to apply classification. Defaults to False.
+            additional_out (bool, optional): Whether to return additional outputs. Defaults to False.
+
+        Returns:
+            torch.Tensor: Output tensor
+        """
+        
+        # Pass input through the first layer and apply ReLU activation
+        x = self.act(self.fc1(x))
+
+        # Pass the output through the second layer and apply ReLU activation
+        x = self.act(self.fc2(x))
+
+        # Pass the output through the third layer to get the final output
+        out = self.fc3(x)
+
+        return out
