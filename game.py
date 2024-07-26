@@ -83,6 +83,12 @@ class Game(object):
         return status,numberIteration
     
     def playAnimation(self,ratPosition:tuple=(0,0)):
+        """
+        Play the game while displaying animation of it
+
+        Args:
+            ratPosition (tuple, optional): Initial position of the rat. Defaults to (0,0).
+        """
         
         # Reset the maze
         self._qmaze.reset(ratPosition)
@@ -144,10 +150,12 @@ class Game(object):
        
     def train(self, numOfEpochs:int,cutoff:int=3000,useVariableEpsilon:bool=True,**kwargs) -> None :
         """
-        Train the model to solve the maze
+        Train the model
 
         Args:
-            numOfEpochs (int): The number of game to train the model
+            numOfEpochs (int): number of iteration we want to train the model
+            cutoff (int, optional): Variable to modify the distribution of epsilon. Defaults to 3000.
+            useVariableEpsilon (bool, optional): Modify epsilon while training the model. Defaults to True.
         """
         
         # Variable to track the evolution of wins and looses
@@ -164,7 +172,7 @@ class Game(object):
             if useVariableEpsilon : self._model.setEpsilon(epsilon[i])
             
             # Play a game
-            status,numberIteration = self.play(textDisplay=False)
+            status,_ = self.play(textDisplay=False)
             
             # If it's a win, we add the number of iteraton to the corresponding list
             if status == 'win' :
@@ -192,6 +200,17 @@ class Game(object):
         plt.show()
 
 def calculate_epsilon(numOfEpochs:int,cutoff:int=3000, display:bool=False):
+    """
+    Compute a list of decrescent epsilon
+
+    Args:
+        numOfEpochs (int): number of epsilon we want
+        cutoff (int, optional): Variable to modify the distribution of epsilon. Defaults to 3000.
+        display (bool, optional): To display the . Defaults to False.
+
+    Returns:
+        list: epsilon list
+    """
     # Calculate the decaying epsilon values
     epsilon = np.exp(-np.arange(numOfEpochs) / cutoff)
 
