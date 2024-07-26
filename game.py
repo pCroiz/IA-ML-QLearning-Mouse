@@ -5,7 +5,7 @@ from matplotlib import animation
 
 class Game(object):
 
-    def __init__(self,model:Rat,qmaze:Qmaze) -> None:
+    def __init__(self,model,qmaze:Qmaze) -> None:
         self._model = model
         self._qmaze = qmaze
         
@@ -38,20 +38,38 @@ class Game(object):
 
         while not(stop):
     
-            # Get the agent position
-            state = self._qmaze.getAgentPosition()
+            # If the model is a classic Rat
+            if isinstance(self._model, Rat) :
+                
+                # Get the agent position
+                state = self._qmaze.getAgentPosition()
     
-            # The agent do a choice
-            action = self._model.act(state)
+                # The agent do a choice
+                action = self._model.act(state)
     
-            # The qmaze give a reward and a status according to the action choosen
-            _, reward, status = self._qmaze.act(action)
+                # The qmaze give a reward and a status according to the action choosen
+                _, reward, status = self._qmaze.act(action)
     
-            # Get the new state
-            newSate = self._qmaze.getAgentPosition()
+                # Get the new state
+                newSate = self._qmaze.getAgentPosition()
     
-            # Update the model
-            self._model.train(state,action,reward,newSate)
+                # Update the model
+                self._model.train(state,action,reward,newSate)
+            
+            # If the model is the neuralRat
+            else:
+
+                # Get the current state of the maze
+                envState = self._qmaze.observe()
+
+                # The agent do a choice
+                action = self._model.act(envState)
+
+                # Get the new state of the maze
+                nextEnvstate, reward, status = self._qmaze.act(action)
+
+                # Train the model
+                self._model.train(envState,action,reward,nextEnvstate)
     
             if status == 'lose':
                 if textDisplay : print("The game has been losed in : " + str(numberIteration) + " iteration")
@@ -75,18 +93,38 @@ class Game(object):
 
         def update(frame):
             
-            # Get the agent position
-            state = self._qmaze.getAgentPosition()
+            # If the model is a classic Rat
+            if isinstance(self._model, Rat) :
+                
+                # Get the agent position
+                state = self._qmaze.getAgentPosition()
+    
+                # The agent do a choice
+                action = self._model.act(state)
+    
+                # The qmaze give a reward and a status according to the action choosen
+                _, reward, status = self._qmaze.act(action)
+    
+                # Get the new state
+                newSate = self._qmaze.getAgentPosition()
+    
+                # Update the model
+                self._model.train(state,action,reward,newSate)
+            
+            # If the model is the neuralRat
+            else:
 
-            # The agent do a choice
-            action = self._model.act(state)
+                # Get the current state of the maze
+                envState = self._qmaze.observe()
 
-            envstate, reward, status = self._qmaze.act(action)
+                # The agent do a choice
+                action = self._model.act(envState)
 
-            # Get the new state
-            newSate = self._qmaze.getAgentPosition()
+                # Get the new state of the maze
+                nextEnvstate, reward, status = self._qmaze.act(action)
 
-            self._model.updateQ(state,action,reward,newSate)
+                # Train the model
+                self._model.train(envState,action,reward,nextEnvstate)
 
             if status == 'lose' or status == 'win':
                 return True
@@ -138,6 +176,8 @@ class Game(object):
                 
                 # Increment the number of iteration
                 numberOfIteration += 1
+                
+                print(numberOfIteration)
             else:
                 
                 # If we loose we append the new number of iteration to the loose list
