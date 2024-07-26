@@ -203,6 +203,9 @@ class NeuralRat(object):
         
         # Get the neural Network
         self.neuralNetwork = neuralNetwork
+        
+        # Set the optimizer
+        self._optimizer = optim.Adam(self.neuralNetwork.parameters(), lr=1e-4)
 
         # Get the init Position
         self._initPosition = initPosition
@@ -263,8 +266,33 @@ class NeuralRat(object):
         # return the choosen action
         return action
 
-    def train(self,previousState:tuple,choosenAction:int,rewardReceived:float,state:tuple,) -> None :
-        pass
+    def train(self, previousState: tuple, chosenAction: int, rewardReceived: float, state: tuple) -> None:
+        # Convert states to tensors
+        previousState = torch.Tensor(previousState).to(self._device).view(1, -1)
+        state = torch.Tensor(state).to(self._device).view(1, -1)
+
+        # Convert action to tensor
+        chosenAction = torch.Tensor([chosenAction]).long().to(self._device)
+
+        # Convert reward to tensor
+        rewardReceived = torch.Tensor([rewardReceived]).to(self._device)
+
+        # Create a batch with a single transition
+        batch = (previousState, chosenAction, state, rewardReceived, None)
+
+        # Compute the loss
+        loss = Qloss(batch, self.neuralNetwork, gamma=self._gamma, device=self._device)
+
+        # Zero the gradients
+        self._optimizer.zero_grad()
+
+        # Perform backpropagation
+        loss.backward()
+
+        # Update the network parameters
+        self._optimizer.step()
+        
+        return loss.item()
     
     def setEpsilon(self,eps:float):
         self._eps = eps
