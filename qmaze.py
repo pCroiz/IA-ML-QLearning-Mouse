@@ -49,6 +49,12 @@ class Qmaze(object):
         self.reset(rat)
 
     def reset(self,rat:tuple) -> None:
+        """
+        Reset the Qmaze class with the initial value
+
+        Args:
+            rat (tuple): The initial rat position
+        """
         # Reset the rat
         self.rat = rat
 
@@ -71,7 +77,14 @@ class Qmaze(object):
         self.visited = set()
 
 
-    def update_state(self,action):
+    def update_state(self,action:int):
+        """
+        Update the state of the maze reguarding the action
+
+        Args:
+            action (int): The action choosen
+        """
+        
         # Get the dimension of the maze
         nrows,ncols = self.maze.shape
 
@@ -110,7 +123,10 @@ class Qmaze(object):
 
     def get_reward(self):
         """
-        Give the reward reguarding the situation of the rat
+        Return the reward the environment give to the model reguarding the situation
+
+        Returns:
+            float: The reward
         """
 
         # Get the state of the rat
@@ -139,9 +155,17 @@ class Qmaze(object):
         if mode == 'valid':
             return -0.04
 
-    def act(self, action):
+    def act(self, action:int):
         """
-        Process one step in the maze
+        Process one step into the maze
+
+        Args:
+            action (int): The action
+
+        Returns:
+            (tuple): The state of the environment
+            (float): The reward
+            (str): The status of the game
         """
         # Update the action
         self.update_state(action)
@@ -163,7 +187,10 @@ class Qmaze(object):
 
     def observe(self):
         """
-        observe the maze ?? 
+        Observe the state of the maze
+
+        Returns:
+            (tuple): The state og the maze
         """
         canvas = self.draw_env()
         envstate = canvas.reshape((1, -1))
@@ -173,6 +200,7 @@ class Qmaze(object):
         """
         Create a canvas useful to draw the maze with matplotlib
         """
+        
         # Create the canvas
         canvas = np.copy(self.maze)
 
@@ -289,6 +317,9 @@ class Qmaze(object):
         return (row,col)
     
     def draw(self):
+        """
+        Draw the maze
+        """
         plt.figure()
         im = plt.imshow(np.round(1 - self.maze), interpolation='none', aspect='equal', cmap='Greys')
         ax = plt.gca()
