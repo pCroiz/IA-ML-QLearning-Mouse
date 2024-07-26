@@ -2,10 +2,11 @@ from qmaze import *
 from agent import *
 import matplotlib.pyplot as plt
 from matplotlib import animation
+from tqdm import tqdm
 
 class Game(object):
 
-    def __init__(self,model,qmaze:Qmaze) -> None:
+    def __init__(self,model:Rat,qmaze:Qmaze) -> None:
         self._model = model
         self._qmaze = qmaze
         
@@ -142,12 +143,12 @@ class Game(object):
 
     
        
-    def train(self, numberOfWin:int) -> None :
+    def train(self, numOfEpochs:int,cutoff:int=3000,useVariableEpsilon:bool=True,**kwargs) -> None :
         """
         Train the model to solve the maze
 
         Args:
-            numberOfWin (int): The number of win before we consider the model effective
+            numOfEpochs (int): The number of game to train the model
         """
         
         # Initialize the variable for the iteration
@@ -159,8 +160,15 @@ class Game(object):
         # Initialize a list that keeps the number of iteration through the looses
         iterationForLoose = [100]
         
+        # Initialize the list of the decrescent epsilon
+        if useVariableEpsilon:
+            epsilon = calculate_epsilon(numOfEpochs,cutoff,('displayEpsilon' in kwargs and kwargs['displayEpsilon']))
+
         # Start the loop
-        while numberOfIteration < numberOfWin:
+        for i in tqdm(range(numOfEpochs)):
+            
+            # Set epsilon
+            if useVariableEpsilon : self._model.setEpsilon(epsilon[i])
             
             # Play a game
             status,numberIteration = self.play(textDisplay=False)
@@ -194,3 +202,22 @@ class Game(object):
         plt.title('Evolution of Number of Iterations Through the Games')
         plt.legend()
         plt.show()
+
+def calculate_epsilon(numOfEpochs:int,cutoff:int=3000, display:bool=False):
+    # Calculate the decaying epsilon values
+    epsilon = np.exp(-np.arange(numOfEpochs) / cutoff)
+
+    # Find the cutoff index
+    cutoff_index = min(100 * int(numOfEpochs / cutoff), numOfEpochs - 1)
+
+     # Apply the cutoff to the epsilon values
+    epsilon[epsilon > epsilon[cutoff_index]] = epsilon[cutoff_index]
+    
+    if display :
+        plt.plot(epsilon, color = 'orangered', ls = '--')
+        plt.xlabel('Epochs')
+        plt.ylabel('Epsilon')
+        plt.show()
+        
+
+    return epsilon
