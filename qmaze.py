@@ -6,7 +6,7 @@ UP = 1
 RIGHT = 2
 DOWN = 3
 
-rat_mark = 0.5
+rat_mark = 0.49
 
 class Qmaze(object):
     """
@@ -37,7 +37,9 @@ class Qmaze(object):
 
         # Get the list of the free cells
         self.free_cells = [(r,c) for r in range(nrows) for c in range(ncols) if self._maze[r,c] == 1.0]
-        self.free_cells.remove(self.target)
+        
+        if self.target in self.free_cells :
+            self.free_cells.remove(self.target)
 
         # Verify that the target and the rat are in free cells
         if self._maze[self.target] == 0.0:
@@ -321,7 +323,15 @@ class Qmaze(object):
         Draw the maze
         """
         plt.figure()
-        im = plt.imshow(np.round(1 - self.maze), interpolation='none', aspect='equal', cmap='Greys')
+        
+        # Create the design 
+        design = np.copy(1-self._maze)
+        
+        # Color the visited cell
+        for row,col in self.visited:
+            design[row,col] = 0.2
+        
+        im = plt.imshow(design, interpolation='none', aspect='equal', cmap='Greys')
         ax = plt.gca()
 
         plt.xticks([], [])
