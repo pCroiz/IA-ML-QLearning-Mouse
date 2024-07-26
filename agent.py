@@ -74,7 +74,7 @@ class Rat(object):
         # return the choosen action
         return action
 
-    def updateQ(self,previousState:tuple,choosenAction:int,rewardReceived:float,state:tuple,) -> None :
+    def train(self,previousState:tuple,choosenAction:int,rewardReceived:float,state:tuple,) -> None :
         """
         Update the value of Q(s,a)
 
@@ -101,8 +101,20 @@ class Rat(object):
         # Update the Q matrix
         self._Q[i_prev, j_prev, choosenAction] = new_Q
         
+
+class NeuralRat(object):
+    
+    def __init__(self,maze:Qmaze,possibleAction:enumerate,initPosition:tuple=(0,0),eps:float=0.8,alpha:float=0.8,gamma:float=0.95) -> None:
+        pass
+
+    def act(self,state:tuple) -> int:
+       pass
+
+    def train(self,previousState:tuple,choosenAction:int,rewardReceived:float,state:tuple,) -> None :
+        pass
         
-        
+    
+          
 class NeuralNetwork(nn.Module):
     
     def __init__(self,Ni:int,Nh1:int,Nh2:int,No:int=4) -> None:
@@ -124,6 +136,7 @@ class NeuralNetwork(nn.Module):
         self.fc2 = nn.Linear(Nh1, Nh2)
         self.fc3 = nn.Linear(Nh2, No)
         self.act = nn.ReLU()
+        
         
     def forward(self, x, classification = False, additional_out=False):
         """
@@ -190,4 +203,5 @@ def Qloss(batch, net, gamma=0.99, device="cuda"):
     # Compute the Expected Q-Values Using the Bellman Equation
     expected_state_action_values = next_state_values * gamma + rewards
     
+    # Compute the MSE
     return nn.MSELoss()(state_action_values, expected_state_action_values)
