@@ -1,6 +1,7 @@
 from qmaze import *
 import numpy as np
 import random
+import scipy.special as sp
 
 import torch
 import torch.nn as nn
@@ -100,55 +101,9 @@ class Rat(object):
 
         # Update the Q matrix
         self._Q[i_prev, j_prev, choosenAction] = new_Q
-        
-
-class NeuralRat(object):
-    
-    def __init__(self,maze:Qmaze,possibleAction:enumerate,neuralNetwork:nn.Module,initPosition:tuple=(0,0),eps:float=0.8,alpha:float=0.8,gamma:float=0.95) -> None:
-        # Get the maze
-        self._maze = maze
-        
-        # Get the neural Network
-        self.neuralNetwork = neuralNetwork
-
-        # Get the init Position
-        self._initPosition = initPosition
-        
-        ### Initialisation of Q ####
-        self._possibleAction = possibleAction
-
-        # Get the number of actions
-        nbrAction = len(possibleAction)
-
-        # Get the size of the maze
-        nrows,ncols = self._maze.shape()
-
-        # Initialize the Q matrix with random value between 0 and 1
-        self._Q = np.random.rand(nrows, ncols, nbrAction)
-
-        # Set the value of epsilon
-        self._eps = eps
-        
-        # Set the value of gamma
-        self._gamma = gamma
-        
-        # Set the value of alpha (learning rate)
-        self._alpha = alpha
-
-    def act(self,state:tuple) -> int:
-       pass
-
-    def train(self,previousState:tuple,choosenAction:int,rewardReceived:float,state:tuple,) -> None :
-        pass
-    
-    def setEpsilon(self,eps:float):
-        self._eps = eps
-    
-    def getEpsilon(self):
-        return self._eps
-        
-    
-          
+   
+   
+     
 class NeuralNetwork(nn.Module):
     
     def __init__(self,Ni:int,Nh1:int,Nh2:int,No:int=4) -> None:
@@ -239,3 +194,80 @@ def Qloss(batch, net, gamma=0.99, device="cuda"):
     
     # Compute the MSE
     return nn.MSELoss()(state_action_values, expected_state_action_values)
+
+class NeuralRat(object):
+    
+    def __init__(self,maze:Qmaze,possibleAction:enumerate,neuralNetwork:NeuralNetwork,initPosition:tuple=(0,0),eps:float=0.8,alpha:float=0.8,gamma:float=0.95,device:str='cuda') -> None:
+        # Get the maze
+        self._maze = maze
+        
+        # Get the neural Network
+        self.neuralNetwork = neuralNetwork
+
+        # Get the init Position
+        self._initPosition = initPosition
+        
+        ### Initialisation of Q ####
+        self._possibleAction = possibleAction
+
+        # Get the number of actions
+        nbrAction = len(possibleAction)
+
+        # Get the size of the maze
+        nrows,ncols = self._maze.shape()
+
+        # Initialize the Q matrix with random value between 0 and 1
+        self._Q = np.random.rand(nrows, ncols, nbrAction)
+
+        # Set the value of epsilon
+        self._eps = eps
+        
+        # Set the value of gamma
+        self._gamma = gamma
+        
+        # Set the value of alpha (learning rate)
+        self._alpha = alpha
+        
+        # Set the device we used (CPU or GPU)
+        self._device = device
+
+    def act(self,state:tuple,softMax:bool=True) -> int:
+        
+        # Converts the state into a torch Tensor
+        state = torch.Tensor(state).to(self._device).view(1,-1)
+        
+        # computes the Q-values for the given state using the neural network
+        Qvalue = self.neuralNetwork(state).cpu().detach().numpy().squeeze()
+       
+        # If softmax
+        if softMax:
+            p = sp.softmax(Qvalue/self._eps).squeeze()
+            p /= np.sum(p)
+            action = np.random.choice(len(self._possibleAction), p = p)
+            
+        # Choose between exploitation (eps) or exploration (1-eps)
+        choice = random.random()
+
+        # In this case, we do the exploitation choice
+        if choice < self._eps :
+            
+            # We choose the action with the maximum value of Q
+            action = np.argmax(Qvalue)
+
+        # In this one, we do the exploration choice
+        else:
+            
+            # We choose a random action
+            action = random.choice([i for i in range(len(self._possibleAction))])
+
+        # return the choosen action
+        return action
+
+    def train(self,previousState:tuple,choosenAction:int,rewardReceived:float,state:tuple,) -> None :
+        pass
+    
+    def setEpsilon(self,eps:float):
+        self._eps = eps
+    
+    def getEpsilon(self):
+        return self._eps

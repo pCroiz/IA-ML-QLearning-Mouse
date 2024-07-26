@@ -51,7 +51,7 @@ class Game(object):
             newSate = self._qmaze.getAgentPosition()
     
             # Update the model
-            self._model.updateQ(state,action,reward,newSate)
+            self._model.train(state,action,reward,newSate)
     
             if status == 'lose':
                 if textDisplay : print("The game has been losed in : " + str(numberIteration) + " iteration")
