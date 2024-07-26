@@ -184,8 +184,6 @@ class Game(object):
                 
                 # Increment the number of iteration
                 numberOfIteration += 1
-                
-                print(numberOfIteration)
             else:
                 
                 # If we loose we append the new number of iteration to the loose list
