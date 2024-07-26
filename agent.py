@@ -104,13 +104,19 @@ class Rat(object):
 
 class NeuralRat(object):
     
-    def __init__(self,maze:Qmaze,possibleAction:enumerate,initPosition:tuple=(0,0),eps:float=0.8,alpha:float=0.8,gamma:float=0.95) -> None:
+    def __init__(self,maze:Qmaze,possibleAction:enumerate,neuralNetwork:nn.Module,initPosition:tuple=(0,0),eps:float=0.8,alpha:float=0.8,gamma:float=0.95) -> None:
         pass
 
     def act(self,state:tuple) -> int:
        pass
 
     def train(self,previousState:tuple,choosenAction:int,rewardReceived:float,state:tuple,) -> None :
+        pass
+    
+    def setEpsilon(self,eps:float):
+        pass
+    
+    def getEpsilon(self):
         pass
         
     
