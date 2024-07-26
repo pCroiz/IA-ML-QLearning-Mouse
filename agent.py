@@ -61,7 +61,7 @@ class Rat(object):
         choice = random.random()
 
         # In this case, we do the exploitation choice
-        if choice < self._eps :
+        if choice < 1 - self._eps :
             
             # We choose the action with the maximum value of Q
             action = np.argmax(Qvalue)
@@ -258,7 +258,7 @@ class NeuralRat(object):
         choice = random.random()
 
         # In this case, we do the exploitation choice
-        if choice < self._eps :
+        if choice < 1 - self._eps :
             
             # We choose the action with the maximum value of Q
             action = np.argmax(Qvalue)
