@@ -118,7 +118,7 @@ class NeuralNetwork(nn.Module):
         """
         
         # Init of the super class
-        super.__init__()
+        super().__init__()
         
         # Init of the layer
         self.fc1 = nn.Linear(Ni, Nh1)
