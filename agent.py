@@ -6,7 +6,6 @@ import scipy.special as sp
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import collections
 
 class Rat(object):
 
@@ -204,6 +203,7 @@ def Qloss(batch, net, gamma=0.99, device="cpu"):
 class NeuralRat(object):
     
     def __init__(self,maze:Qmaze,possibleAction:enumerate,neuralNetwork:NeuralNetwork,initPosition:tuple=(0,0),eps:float=0.8,alpha:float=0.8,gamma:float=0.95,device:str='cpu') -> None:
+        
         # Get the maze
         self._maze = maze
         
@@ -241,6 +241,16 @@ class NeuralRat(object):
         self._device = device
 
     def act(self,state:tuple,softMax:bool=True) -> int:
+        """
+        Reguarding the current environment state, compute the neww action using the neural Network
+
+        Args:
+            state (tuple): The environment state
+            softMax (bool, optional): If we softmax the value . Defaults to True.
+
+        Returns:
+            int: Return the choosen action
+        """
         
         # Converts the state into a torch Tensor
         state = torch.Tensor(state).to(self._device).view(1,-1)
@@ -272,7 +282,21 @@ class NeuralRat(object):
         # return the choosen action
         return action
 
-    def train(self, previousState: tuple, chosenAction: int, rewardReceived: float, state: tuple) -> None:
+    def train(self, previousState: tuple, chosenAction: int, rewardReceived: float, state: tuple):
+        """
+        Train the model. Here, we train the NeuralNetwork claas
+
+        Args:
+            previousState (tuple): The previous environment state (time t-1)
+            chosenAction (int): The action the model choose (time t-1)
+            rewardReceived (float): The reward he received for the action choosen (time t-1)
+            state (tuple): The new environment state (time t)
+
+        Returns:
+            float: The current loss
+        """
+        
+        
         # Convert states to tensors
         previousState = torch.Tensor(previousState).to(self._device).view(1, -1)
         state = torch.Tensor(state).to(self._device).view(1, -1)
