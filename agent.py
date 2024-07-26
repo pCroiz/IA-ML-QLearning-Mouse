@@ -151,7 +151,7 @@ class NeuralNetwork(nn.Module):
 
         return out
     
-def Qloss(batch, net, gamma=0.99, device="cuda"):
+def Qloss(batch, net, gamma=0.99, device="cpu"):
     """
     Compute the loss for a Deep Q-Learning (DQL) algorithm.
 
@@ -159,7 +159,7 @@ def Qloss(batch, net, gamma=0.99, device="cuda"):
         batch (tuple): A tuple containing the states, actions, next states, rewards, and ?.
         net (nn.Module): The neural network (Q-network) that estimates the Q-values.
         gamma (float, optional): The discount factor, which determines the importance of future rewards. Defaults to 0.99.
-        device (str, optional): The device on which the computations are performed (e.g., "cuda" for GPU or "cpu" for CPU). Defaults to "cuda".
+        device (str, optional): The device on which the computations are performed (e.g., "cuda" for GPU or "cpu" for CPU). Defaults to "cpu".
 
     Returns:
         torch.Tensor: The computed loss.
@@ -197,7 +197,7 @@ def Qloss(batch, net, gamma=0.99, device="cuda"):
 
 class NeuralRat(object):
     
-    def __init__(self,maze:Qmaze,possibleAction:enumerate,neuralNetwork:NeuralNetwork,initPosition:tuple=(0,0),eps:float=0.8,alpha:float=0.8,gamma:float=0.95,device:str='cuda') -> None:
+    def __init__(self,maze:Qmaze,possibleAction:enumerate,neuralNetwork:NeuralNetwork,initPosition:tuple=(0,0),eps:float=0.8,alpha:float=0.8,gamma:float=0.95,device:str='cpu') -> None:
         # Get the maze
         self._maze = maze
         
