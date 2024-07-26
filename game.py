@@ -9,8 +9,7 @@ class Game(object):
     def __init__(self,model:Rat,qmaze:Qmaze) -> None:
         self._model = model
         self._qmaze = qmaze
-        
-        
+         
     def play(self,ratPosition:tuple=(0,0),**kwargs) -> str:
         """
         Play one game of the maze
@@ -70,7 +69,7 @@ class Game(object):
                 nextEnvstate, reward, status = self._qmaze.act(action)
 
                 # Train the model
-                self._model.train(envState,action,reward,nextEnvstate)
+                self._lossList.append(self._model.train(envState,action,reward,nextEnvstate))
     
             if status == 'lose':
                 if textDisplay : print("The game has been losed in : " + str(numberIteration) + " iteration")
@@ -151,14 +150,8 @@ class Game(object):
             numOfEpochs (int): The number of game to train the model
         """
         
-        # Initialize the variable for the iteration
-        numberOfIteration = 0
-        
-        # Initialize a list that keeps the number of iteration through the victory
-        iterationForVictory = [100]
-        
-        # Initialize a list that keeps the number of iteration through the looses
-        iterationForLoose = [100]
+        # Variable to track the evolution of wins and looses
+        evolution = []
         
         # Initialize the list of the decrescent epsilon
         if useVariableEpsilon:
@@ -176,28 +169,25 @@ class Game(object):
             # If it's a win, we add the number of iteraton to the corresponding list
             if status == 'win' :
                 
-                # If we win we append the new number of iteration to the win list
-                iterationForVictory.append(numberIteration)
+                # If we win we append 1
+                evolution.append(1)
                 
-                # And we dupplicate the last value for the loose list
-                iterationForLoose.append(iterationForLoose[-1])
-                
-                # Increment the number of iteration
-                numberOfIteration += 1
             else:
+                # Else, we append 0
+                evolution.append(0)
                 
-                # If we loose we append the new number of iteration to the loose list
-                iterationForLoose.append(numberIteration)
-                
-                # And we dupplicate the last value for the win list
-                iterationForVictory.append(iterationForVictory[-1])
-                
-        # Finally we plot the evolution of the number of iteration through the win
-        plt.plot([i for i in range(len(iterationForVictory))], iterationForVictory,'r', label='Wins')
-        plt.plot([i for i in range(len(iterationForLoose))], iterationForLoose,'b', label='Losses')
+
+        # Display the number of wins and losses
+        tqdm.write(f"\033[92mWins: {np.sum(evolution)}\033[0m")  # Green text for wins
+        tqdm.write(f"\033[91mLosses: {i-np.sum(evolution)}\033[0m")  # Red text for losses  
+        
+        # Display the evolution of the wins and the looses
+        epochs = range(numOfEpochs)
+        plt.plot(epochs, [sum(evolution[:i+1]) for i in epochs], 'g', label='Wins')
+        plt.plot(epochs, [i - sum(evolution[:i+1]) for i in epochs], 'r', label='Losses')
         plt.xlabel('Number of Games')
-        plt.ylabel('Number of Iterations')
-        plt.title('Evolution of Number of Iterations Through the Games')
+        plt.ylabel('Number of Wins/Losses')
+        plt.title('Evolution of Wins and Losses Through the Games')
         plt.legend()
         plt.show()
 
@@ -211,6 +201,7 @@ def calculate_epsilon(numOfEpochs:int,cutoff:int=3000, display:bool=False):
      # Apply the cutoff to the epsilon values
     epsilon[epsilon > epsilon[cutoff_index]] = epsilon[cutoff_index]
     
+    # Display the evolution of epsilon
     if display :
         plt.plot(epsilon, color = 'orangered', ls = '--')
         plt.xlabel('Epochs')
