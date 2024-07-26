@@ -101,6 +101,12 @@ class Rat(object):
 
         # Update the Q matrix
         self._Q[i_prev, j_prev, choosenAction] = new_Q
+        
+    def setEpsilon(self,eps:float):
+        self._eps = eps
+    
+    def getEpsilon(self):
+        return self._eps
    
    
      
