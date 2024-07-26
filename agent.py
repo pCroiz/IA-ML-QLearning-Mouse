@@ -105,7 +105,35 @@ class Rat(object):
 class NeuralRat(object):
     
     def __init__(self,maze:Qmaze,possibleAction:enumerate,neuralNetwork:nn.Module,initPosition:tuple=(0,0),eps:float=0.8,alpha:float=0.8,gamma:float=0.95) -> None:
-        pass
+        # Get the maze
+        self._maze = maze
+        
+        # Get the neural Network
+        self.neuralNetwork = neuralNetwork
+
+        # Get the init Position
+        self._initPosition = initPosition
+        
+        ### Initialisation of Q ####
+        self._possibleAction = possibleAction
+
+        # Get the number of actions
+        nbrAction = len(possibleAction)
+
+        # Get the size of the maze
+        nrows,ncols = self._maze.shape()
+
+        # Initialize the Q matrix with random value between 0 and 1
+        self._Q = np.random.rand(nrows, ncols, nbrAction)
+
+        # Set the value of epsilon
+        self._eps = eps
+        
+        # Set the value of gamma
+        self._gamma = gamma
+        
+        # Set the value of alpha (learning rate)
+        self._alpha = alpha
 
     def act(self,state:tuple) -> int:
        pass
@@ -114,10 +142,10 @@ class NeuralRat(object):
         pass
     
     def setEpsilon(self,eps:float):
-        pass
+        self._eps = eps
     
     def getEpsilon(self):
-        pass
+        return self._eps
         
     
           
