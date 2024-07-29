@@ -69,7 +69,7 @@ class Game(object):
                 nextEnvstate, reward, status = self._qmaze.act(action)
 
                 # Train the model
-                self._lossList.append(self._model.train(envState,action,reward,nextEnvstate))
+                loss = self._model.train(envState,action,reward,nextEnvstate)
     
             if status == 'lose':
                 if textDisplay : print("The game has been losed in : " + str(numberIteration) + " iteration")

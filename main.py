@@ -20,31 +20,36 @@ actions_dict = {
 }
 
 # Create the maze
-maze = np.array([
-    [ 1.,  0.,  1.,  1.,  1.,  1.,  1.,  1.,  1.,  1.],
-    [ 1.,  1.,  1.,  1.,  1.,  0.,  1.,  1.,  1.,  1.],
-    [ 1.,  1.,  1.,  1.,  1.,  0.,  1.,  1.,  1.,  1.],
-    [ 0.,  0.,  1.,  0.,  0.,  1.,  0.,  1.,  1.,  1.],
-    [ 1.,  1.,  0.,  1.,  0.,  1.,  0.,  0.,  0.,  1.],
-    [ 1.,  1.,  0.,  1.,  0.,  1.,  1.,  1.,  1.,  1.],
-    [ 1.,  1.,  1.,  1.,  1.,  1.,  1.,  1.,  1.,  1.],
-    [ 1.,  1.,  1.,  1.,  1.,  1.,  0.,  0.,  0.,  0.],
-    [ 1.,  0.,  0.,  0.,  0.,  0.,  1.,  1.,  1.,  1.],
-    [ 1.,  1.,  1.,  1.,  1.,  1.,  1.,  0.,  1.,  1.]
-])
+maze = np.array(np.load('maze_generator/maze.npy'))
 
 # Creation of a Qmaze
 qmaze = Qmaze(maze)
 
-# Creation of a Rat
-rat = Rat(qmaze,actions_dict,initPosition=(0,0),eps=0.95)
-print("ok")
 qmaze.draw()
 
+# Creation of a Rat
+rat = Rat(qmaze,actions_dict,initPosition=(0,0),eps=0.95)
+
+# Creation of the neural network
+neuralNetwork = NeuralNetwork(maze.size, maze.size, maze.size, len(actions_dict))
+
+# Creation of a neural Rat
+neuralRat = NeuralRat(qmaze,actions_dict,neuralNetwork)
+
+# Load the neural model already trained
+neuralRat.load_model('neuralNetwork/model.pth')
+
 # Create the game (the board game)
-game = Game(rat,qmaze)
+game = Game(neuralRat,qmaze)
+
+# Define the number of epochs
+num_epochs = 20000
 
 # Train the model
-game.play(textDisplay=True)
-game.train(100)
+game.train(num_epochs,3000,True,displayEpsilon=True)
+
+#neuralRat.save_model('neuralNetwork/model.pth')
+
 game.playAnimation()
+
+print("OK !")
