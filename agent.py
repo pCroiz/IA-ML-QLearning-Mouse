@@ -329,3 +329,21 @@ class NeuralRat(object):
     
     def getEpsilon(self):
         return self._eps
+    
+    def save_model(self, path: str):
+        """
+        Save the neural network model to a file.
+
+        Args:
+            path (str): The path where the model will be saved.
+        """
+        torch.save(self.neuralNetwork.state_dict(), path)
+
+    def load_model(self, path: str):
+        """
+        Load the neural network model from a file.
+
+        Args:
+            path (str): The path from where the model will be loaded.
+        """
+        self.neuralNetwork.load_state_dict(torch.load(path))
