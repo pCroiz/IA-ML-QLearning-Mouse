@@ -25,6 +25,7 @@ maze = np.array(np.load('maze_generator/maze.npy'))
 # Creation of a Qmaze
 qmaze = Qmaze(maze)
 
+# Draw the maze
 qmaze.draw()
 
 # Creation of a Rat
@@ -51,5 +52,3 @@ game.train(num_epochs,3000,True,displayEpsilon=True)
 #neuralRat.save_model('neuralNetwork/model.pth')
 
 game.playAnimation()
-
-print("OK !")
