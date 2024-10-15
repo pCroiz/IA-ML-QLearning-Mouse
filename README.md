@@ -4,6 +4,8 @@
 
 I created this repository to explore and implement a Reinforcement Learning (RL) algorithm by myself. The theoretical part of RL and the two algorithms are not covered here; instead, I focus on providing a clear implementation of these algorithms. If you're looking for a more theoretical explanation, I invite you to follow the work this repository is based on!
 
+Finally, it's a method to help me remember some algorithms, somewhat like a course. A quick reminder is that I'm not a professor, just someone looking to improve their skills with ML algorithms.
+
 If you find any problems in the implementation or README, feel free to inform me.
 
 ## The algorithms for the maze problem
@@ -16,9 +18,9 @@ At each state, we provide information to the agent about its current state. The 
 
 ### QLearning
 
-To make a choice, we need to define a policy for the Agent, here called Q. This policy is a table where, for each state, we have a value for each action. If $ N $ is the number of states and $ M $ is the number of actions, we obtain a table of size $ (N \times M) $. When we create our rat, this policy is initialized with random values. Our goal is to improve this policy to become more accurate regarding the current maze.
+To make a choice, we need to define a policy for the Agent, here called Q. This policy is a table where, for each state, we have a value for each action. If $N$ is the number of states and $M$ is the number of actions, we obtain a table of size $(N \times M)$. When we create our rat, this policy is initialized with random values. Our goal is to improve this policy to become more accurate regarding the current maze.
 
-What are the states? In the QL algorithm, the states are only a tuple of the current position of the rat $ (i, j) $.
+What are the states? In the QL algorithm, the states are only a tuple of the current position of the rat $(i, j)$.
 
 What are the actions? We assume the rat can move in four directions: up, down, right, and left.
 
@@ -26,13 +28,13 @@ Now, there is a maze and a rat. At this point, the rat can move in the maze but 
 - We are not sure that with the initialized values of Q, the rat will make the best choice. We need to explore the maze.
 - The values of Q are fixed; we would like to modify them based on the results.
 
-To resolve the exploration problem, we set a value $ \epsilon $ between 0 and 1, which represents the exploitation chance/percentage, and $ 1 - \epsilon $ represents the exploration chance/percentage. So, at each state, we either make an exploitation choice (following the table) or an exploration choice (taking a random action).
+To resolve the exploration problem, we set a value $\epsilon$ between 0 and 1, which represents the exploitation chance/percentage, and $1 - \epsilon$ represents the exploration chance/percentage. So, at each state, we either make an exploitation choice (following the table) or an exploration choice (taking a random action).
 
 To resolve the Q problem, the QL algorithm comes into play. At each state, the agent takes an action and gets a reward. With this value, we can modify the line of the Q table for the current state. I will not go into more detail on the theoretical part, but you can see [2] for the mathematical details. The key point to retain is that the lower the reward, the lower the Q value for that state and action will be, and thus, a lower chance of being chosen during an exploitation choice. The agent is learning from its actions.
 
 At this point, we have everything necessary to make the rat solve the maze. Now, it only needs to learn the maze. To do this, we run many iterations of this problem to make the rat learn.
 
-A good way to improve this algorithm is to make the $ \epsilon $ value change with the iteration. In fact, at the start, we know that the policy is not accurate, so we need to prioritize exploration. At the opposite end, when the policy may be accurate, we want to reduce the exploration choice. A good way to do that is to decrease the $ \epsilon $ value over the iterations.
+A good way to improve this algorithm is to make the $\epsilon$ value change with the iteration. In fact, at the start, we know that the policy is not accurate, so we need to prioritize exploration. At the opposite end, when the policy may be accurate, we want to reduce the exploration choice. A good way to do that is to decrease the $\epsilon$ value over the iterations.
 
 #### The code
 
